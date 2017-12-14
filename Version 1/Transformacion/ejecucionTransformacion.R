@@ -1,6 +1,6 @@
 #Prueba BATCH:
 path_origen <- "C:/Byte/Machine Learning/Predictivo Port Out - Oficial/Dataset/v.Oficial.puro/V4DATOFIN_pure.csv"
-path_destino <- "C:/Byte/Machine Learning/Predictivo Port Out - Oficial/Dataset/v.Oficial.final/V4DATOFIN_v1_pure_final.csv"
+path_destino <- "C:/Byte/Machine Learning/Predictivo Port Out - Oficial/Dataset/v.Oficial.final/V4DATOFIN_pure_final.csv"
 batch <- transformacion(path_origen,path_destino,"","","B")
 
 #Prueba ONLINE:
