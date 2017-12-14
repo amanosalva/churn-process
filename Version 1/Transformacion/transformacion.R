@@ -130,14 +130,14 @@ transformacion <- function(path_origen, path_destino, trama, token, opcion){
                                    ifelse(V4DATOFIN_pure_trans$fld116_n >= 102400 & V4DATOFIN_pure_trans$fld116_n  < 1024000 & !is.na(V4DATOFIN_pure_trans$fld116_n),"normal", 
                                           ifelse(V4DATOFIN_pure_trans$fld116_n >= 1024000 & V4DATOFIN_pure_trans$fld116_n  < 5242880 & !is.na(V4DATOFIN_pure_trans$fld116_n), "alto",
                                                  ifelse(V4DATOFIN_pure_trans$fld116_n >= 5242880 & V4DATOFIN_pure_trans$fld116_n  < 999999999999999 & !is.na(V4DATOFIN_pure_trans$fld116_n), "muy-alto",
-                                                        ifelse(V4DATOFIN_pure_trans$fld116_n == 999999999999999 & !is.na(V4DATOFIN_pure_trans$fld116_n), "ilimitado", V4DATOFIN_pure_trans$fld116_n)))))
+                                                        ifelse(V4DATOFIN_pure_trans$fld116_n >= 999999999999999 & !is.na(V4DATOFIN_pure_trans$fld116_n), "ilimitado", V4DATOFIN_pure_trans$fld116_n)))))
 
       
       # fld117_c: Cantidad de SMS que ofrece el plan.
       V4DATOFIN_pure_trans$fld117_n <- ifelse(V4DATOFIN_pure_trans$fld117_n >= 0 & V4DATOFIN_pure_trans$fld117_n  < 50 & !is.na(V4DATOFIN_pure_trans$fld117_n), "poco",
                                    ifelse(V4DATOFIN_pure_trans$fld117_n >= 50 & V4DATOFIN_pure_trans$fld117_n  < 100 & !is.na(V4DATOFIN_pure_trans$fld117_n),"normal", 
                                           ifelse(V4DATOFIN_pure_trans$fld117_n >= 100 & V4DATOFIN_pure_trans$fld117_n  < 999999 & !is.na(V4DATOFIN_pure_trans$fld117_n), "alto",
-                                                 ifelse(V4DATOFIN_pure_trans$fld117_n == 999999 & !is.na(V4DATOFIN_pure_trans$fld117_n), "ilimitado", V4DATOFIN_pure_trans$fld117_n))))
+                                                 ifelse(V4DATOFIN_pure_trans$fld117_n >= 999999 & !is.na(V4DATOFIN_pure_trans$fld117_n), "ilimitado", V4DATOFIN_pure_trans$fld117_n))))
       
 
       #####
@@ -211,11 +211,19 @@ transformacion <- function(path_origen, path_destino, trama, token, opcion){
       cntsol_n <- V4DATOFIN_pure_trans$cntsol_n
       cntsol_c <- ifelse(cntsol_n == 0, "0", 
                          ifelse(cntsol_n > 0, ">0", cntsol_n))
-      V4DATOFIN_pure_trans$cntsol_c <- cntsol_c
+      V4DATOFIN_pure_trans$cntsol_n <- cntsol_c
       #Se deber? cambiar la descripci?n a "Usuario solicit? alguna vez baja"?
       #Se conservar? esta variable.
       #caracteristicasInutiles <- c("cntsol_n").
       #V4DATOFIN_pure_trans <- eliminaCaracteristica(V4DATOFIN_pure_trans, caracteristicasInutiles)
+      
+      #Moviendo la cantidad de solicitudes al final, porque en ese orden estaba definido la salida.
+      cntsol_n_temp <- V4DATOFIN_pure$cntsol_n
+      V4DATOFIN_pure_trans <- eliminaCaracteristica(V4DATOFIN_pure_trans, c("cntsol_n"))
+      cntsol_c <- cntsol_n_temp
+      V4DATOFIN_pure_trans <- cbind(V4DATOFIN_pure_trans, cntsol_c)
+      rm(cntsol_c, cntsol_n_temp)
+      
       
       
       #### Se crear? nueva variable    f19_n + f20_n + f21_n  -->  portant_c   (portaciones anteriores a cualquier operador)
@@ -360,16 +368,17 @@ transformacion <- function(path_origen, path_destino, trama, token, opcion){
       
       V4DATOFIN_pure_trans_save  <-V4DATOFIN_pure_trans 
       
-      
-      #Colocando nombres resultantes
-      names(V4DATOFIN_pure_trans) <- c("antig_n","numlin_c","produc_c","gama_c","eqanti_n","linper_c","costpl_n","cntnrc_c","cntctd_c","fld041_c","fld045_c","fld049_c","fld053_c","fld057_c","fld061_c","fld065_c","fld069_c","fld115_c","fld116_c","fld117_c","fld119_c","fld120_c","fld121_c","fld122_c","fld138_n","fld146_n","pli_sn_c","ctotal_n","mtotal_n","cntsol_c","target_c")
-      
       #Moviendo el Target al final:
       target_c_temp <- V4DATOFIN_pure$target_c
       V4DATOFIN_pure_trans <- eliminaCaracteristica(V4DATOFIN_pure_trans, c("target_c"))
       target_c <- target_c_temp
       V4DATOFIN_pure_trans <- cbind(V4DATOFIN_pure_trans, target_c)
       rm(target_c, target_c_temp)
+            
+      #Colocando nombres resultantes
+      names(V4DATOFIN_pure_trans) <- c("antig_n","numlin_c","produc_c","gama_c","eqanti_n","linper_c","costpl_n","cntnrc_c","cntctd_c","fld041_c","fld045_c","fld049_c","fld053_c","fld057_c","fld061_c","fld065_c","fld069_c","fld115_c","fld116_c","fld117_c","fld119_c","fld120_c","fld121_c","fld122_c","fld138_n","fld146_n","pli_sn_c","ctotal_n","mtotal_n","cntsol_c","target_c")
+      
+
       
       print("EXPORTANDO DATA")
       
